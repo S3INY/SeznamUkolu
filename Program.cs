@@ -12,7 +12,8 @@ var app = builder.Build();
 
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-string connString = "server=mojesql-mujprojekt.a.aivencloud.com;port=10341;uid=avnadmin;pwd=AVNS_6HxgAgi6xPEpPJcwzHI;database=defaultdb;SslMode=Required";
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "TVOJE_HESLO_PRO_LOKALNI_TEST";
+string connString = $"server=mojesql-mujprojekt-a.aivencloud.com;port=10341;uid=avnadmin;pwd={dbPassword};database=defaultdb;SslMode=Required";
 
 // REGISTRACE
 app.MapPost("/api/registrace", (UzivatelDTO u) => {
