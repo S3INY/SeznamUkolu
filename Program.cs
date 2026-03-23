@@ -2,18 +2,27 @@ using MySql.Data.MySqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. CHYBA: Musíš nejdřív říct, že chceš CORS používat (zaregistrovat službu)
+// Registrace CORS - nezbytné pro propojení Frontendu a Backendů na různých adresách
 builder.Services.AddCors(); 
 
+// NASTAVENÍ PORTU PRO CLOUD (Render)
+// Render používá proměnnou PORT, pokud není, použije se 5221 pro lokální vývoj
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5221";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
+// Aktivace CORS politiky
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "TVOJE_HESLO_PRO_LOKALNI_TEST";
+// NASTAVENÍ DATABÁZE
+// Heslo se načte z Environment Variables na Renderu. 
+// PRO LOKÁLNÍ TEST: Můžeš si místo "TVOJE_HESLO_Z_AIVENU" napsat své heslo, 
+// ale GitHub tě může znovu zablokovat. Nejlepší je heslo po Pushnutí smazat.
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "AVNS_6HxgAgi6xPEpPJcwzHI";
 string connString = $"server=mojesql-mujprojekt-a.aivencloud.com;port=10341;uid=avnadmin;pwd={dbPassword};database=defaultdb;SslMode=Required";
+
+// --- API ENDPOINTY ---
 
 // REGISTRACE
 app.MapPost("/api/registrace", (UzivatelDTO u) => {
@@ -21,12 +30,12 @@ app.MapPost("/api/registrace", (UzivatelDTO u) => {
     conn.Open();
     var cmd = new MySqlCommand("INSERT INTO uzivatele (jmeno, heslo) VALUES (@j, @h)", conn);
     cmd.Parameters.AddWithValue("@j", u.Jmeno);
-    cmd.Parameters.AddWithValue("@h", u.Heslo); // V praxi se heslo musí hashovat!
+    cmd.Parameters.AddWithValue("@h", u.Heslo); 
     cmd.ExecuteNonQuery();
     return Results.Ok();
 });
 
-// PŘIHLÁŠENÍ (Vrátí ID uživatele, pokud sedí jméno a heslo)
+// PŘIHLÁŠENÍ
 app.MapPost("/api/login", (UzivatelDTO u) => {
     using var conn = new MySqlConnection(connString);
     conn.Open();
@@ -37,7 +46,7 @@ app.MapPost("/api/login", (UzivatelDTO u) => {
     return id != null ? Results.Ok(id) : Results.Unauthorized();
 });
 
-// ÚPRAVA: Načítání úkolů pro konkrétního uživatele
+// NAČÍTÁNÍ ÚKOLŮ
 app.MapGet("/api/ukoly/{userId}", (int userId) => {
     var ukoly = new List<object>();
     using var conn = new MySqlConnection(connString);
@@ -51,7 +60,7 @@ app.MapGet("/api/ukoly/{userId}", (int userId) => {
     return Results.Ok(ukoly);
 });
 
-// ÚPRAVA: Přidávání úkolu pro konkrétního uživatele
+// PŘIDÁVÁNÍ ÚKOLU
 app.MapPost("/api/ukoly", (NovyUkolDTO n) => {
     using var conn = new MySqlConnection(connString);
     conn.Open();
@@ -64,6 +73,6 @@ app.MapPost("/api/ukoly", (NovyUkolDTO n) => {
 
 app.Run();
 
-// POMOCNÉ STRUKTURY
+// POMOCNÉ STRUKTURY (DTOs)
 record UzivatelDTO(string Jmeno, string Heslo);
 record NovyUkolDTO(string Text, int UserId);
