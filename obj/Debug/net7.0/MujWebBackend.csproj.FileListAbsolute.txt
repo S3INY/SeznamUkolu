@@ -1,10 +1,3 @@
-/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.csproj.AssemblyReference.cache
-/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.GeneratedMSBuildEditorConfig.editorconfig
-/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.AssemblyInfoInputs.cache
-/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.AssemblyInfo.cs
-/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.csproj.CoreCompileInputs.cache
-/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.MvcApplicationPartsAssemblyInfo.cs
-/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.MvcApplicationPartsAssemblyInfo.cache
 /Users/kojecky/MujWebBackend/bin/Debug/net7.0/appsettings.Development.json
 /Users/kojecky/MujWebBackend/bin/Debug/net7.0/appsettings.json
 /Users/kojecky/MujWebBackend/bin/Debug/net7.0/MujWebBackend
@@ -37,6 +30,13 @@
 /Users/kojecky/MujWebBackend/bin/Debug/net7.0/runtimes/win/lib/net7.0/System.Diagnostics.EventLog.Messages.dll
 /Users/kojecky/MujWebBackend/bin/Debug/net7.0/runtimes/win/lib/net7.0/System.Diagnostics.EventLog.dll
 /Users/kojecky/MujWebBackend/bin/Debug/net7.0/runtimes/win/lib/net7.0/System.Windows.Extensions.dll
+/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.csproj.AssemblyReference.cache
+/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.GeneratedMSBuildEditorConfig.editorconfig
+/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.AssemblyInfoInputs.cache
+/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.AssemblyInfo.cs
+/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.csproj.CoreCompileInputs.cache
+/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.MvcApplicationPartsAssemblyInfo.cs
+/Users/kojecky/MujWebBackend/obj/Debug/net7.0/MujWebBackend.MvcApplicationPartsAssemblyInfo.cache
 /Users/kojecky/MujWebBackend/obj/Debug/net7.0/staticwebassets/msbuild.MujWebBackend.Microsoft.AspNetCore.StaticWebAssets.props
 /Users/kojecky/MujWebBackend/obj/Debug/net7.0/staticwebassets/msbuild.build.MujWebBackend.props
 /Users/kojecky/MujWebBackend/obj/Debug/net7.0/staticwebassets/msbuild.buildMultiTargeting.MujWebBackend.props

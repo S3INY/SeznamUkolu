@@ -5,11 +5,14 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. CHYBA: Musíš nejdřív říct, že chceš CORS používat (zaregistrovat službu)
 builder.Services.AddCors(); 
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5221";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 var app = builder.Build();
 
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-string connString = "server=127.0.0.1;uid=root;pwd=;database=MojeSQL";
+string connString = "server=mojesql-mujprojekt.a.aivencloud.com;port=10341;uid=avnadmin;pwd=AVNS_6HxgAgi6xPEpPJcwzHI;database=defaultdb;SslMode=Required";
 
 // REGISTRACE
 app.MapPost("/api/registrace", (UzivatelDTO u) => {
