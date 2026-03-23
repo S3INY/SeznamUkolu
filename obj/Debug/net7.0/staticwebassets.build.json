@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "EvgUx4mYHzaCfvwVVIBjEqvC2orSOqoQDDZ7CxrgwA4=",
+  "Source": "MujWebBackend",
+  "BasePath": "_content/MujWebBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

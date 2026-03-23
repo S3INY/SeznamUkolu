@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>IT Dashboard - Login</title>
+    <style>
+        /* Moderní Apple-ish styl */
+        body { font-family: -apple-system, sans-serif; background: #F5F5F7; display: flex; justify-content: center; padding-top: 50px; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 350px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #D2D2D7; border-radius: 10px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #007AFF; color: white; font-weight: 600; cursor: pointer; }
+        .hidden { display: none; }
+        li { background: #FBFBFD; border: 1px solid #F2F2F7; margin: 10px 0; padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="auth-section">
+        <h1 id="auth-title">Přihlášení</h1>
+        <input type="text" id="username" placeholder="Uživatelské jméno">
+        <input type="password" id="password" placeholder="Heslo">
+        <button onclick="provedAuth()" id="auth-btn">Přihlásit se</button>
+        <p style="text-align:center; font-size: 12px; color: #8E8E93; cursor: pointer;" onclick="prepniRezim()">
+            Nemáš účet? Zaregistruj se.
+        </p>
+    </div>
+
+    <div id="task-section" class="hidden">
+        <h1>Moje úkoly</h1>
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="novyUkol" placeholder="Nový úkol...">
+            <button style="width:auto;" onclick="pridatUkol()">+</button>
+        </div>
+        <ul id="seznam"></ul>
+        <button onclick="odhlasit()" style="background:#8E8E93; margin-top:20px; font-size:12px;">Odhlásit se</button>
+    </div>
+</div>
+
+<script>
+    const API = 'http://localhost:5221/api';
+    let userId = null;
+    let jeRezimRegistrace = false;
+
+    // --- 1. KONTROLA PŘI STARTU (Hned jak otevřeš web) ---
+    const ulozenaData = localStorage.getItem('mojeSession');
+    if (ulozenaData) {
+        const session = JSON.parse(ulozenaData);
+        const ted = new Date().getTime();
+
+        // Kontrola, jestli nevypršelo 30 dní (v milisekundách)
+        if (ted < session.expirace) {
+            userId = session.id;
+            zobrazDashboard();
+        } else {
+            localStorage.removeItem('mojeSession'); // Stará data vyhodíme
+        }
+    }
+
+    function prepniRezim() {
+        jeRezimRegistrace = !jeRezimRegistrace;
+        document.getElementById('auth-title').innerText = jeRezimRegistrace ? 'Registrace' : 'Přihlášení';
+        document.getElementById('auth-btn').innerText = jeRezimRegistrace ? 'Vytvořit účet' : 'Přihlásit se';
+        const odkaz = document.querySelector('#auth-section p');
+        odkaz.innerText = jeRezimRegistrace ? 'Už máš účet? Přihlas se.' : 'Nemáš účet? Zaregistruj se.';
+    }
+
+    function provedAuth() {
+        const jmeno = document.getElementById('username').value;
+        const heslo = document.getElementById('password').value;
+        const cesta = jeRezimRegistrace ? '/registrace' : '/login';
+
+        fetch(API + cesta, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Jmeno: jmeno, Heslo: heslo })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Chyba při autentizaci");
+            if (jeRezimRegistrace) {
+                alert("Registrace úspěšná!");
+                prepniRezim();
+                return null;
+            }
+            return res.json();
+        })
+        .then(id => {
+            if (id) {
+                userId = id;
+                
+                // --- 2. ULOŽENÍ NA 30 DNÍ ---
+                const expirace = new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
+                localStorage.setItem('mojeSession', JSON.stringify({ id: id, expirace: expirace }));
+                
+                zobrazDashboard();
+            }
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function zobrazDashboard() {
+        document.getElementById('auth-section').classList.add('hidden');
+        document.getElementById('task-section').classList.remove('hidden');
+        nactiUkoly();
+    }
+
+    function nactiUkoly() {
+        fetch(`${API}/ukoly/${userId}`)
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('seznam');
+                list.innerHTML = '';
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${item.text}</span><button onclick="smazUkol(${item.id})" style="width:auto; background:none; color:red; cursor:pointer;">✕</button>`;
+                    list.appendChild(li);
+                });
+            });
+    }
+
+    function pridatUkol() {
+        const input = document.getElementById('novyUkol');
+        if (!input.value) return;
+
+        fetch(`${API}/ukoly`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Text: input.value, UserId: userId })
+        }).then(() => {
+            input.value = '';
+            nactiUkoly();
+        });
+    }
+
+    function smazUkol(id) {
+        fetch(`${API}/ukoly/${id}`, { method: 'DELETE' })
+            .then(() => nactiUkoly());
+    }
+
+    function odhlasit() {
+        // --- 3. VYMAZÁNÍ PŘI ODHLÁŠENÍ ---
+        localStorage.removeItem('mojeSession');
+        location.reload();
+    }
+</script>
+
+</body>
+</html>
