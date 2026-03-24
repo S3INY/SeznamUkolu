@@ -11,7 +11,34 @@
         button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #007AFF; color: white; font-weight: 600; cursor: pointer; }
         .hidden { display: none; }
         li { background: #FBFBFD; border: 1px solid #F2F2F7; margin: 10px 0; padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; }
+
+        /* Základní úpravy pro mobily (šířka pod 600px) */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        width: 100%; /* Roztáhne kontejner na celou šířku */
+        padding: 15px;
+    }
+
+    input[type="text"], button {
+        width: 100%; /* Vstupní pole a tlačítka pod sebe */
+        margin-bottom: 10px;
+        font-size: 16px; /* Zabrání automatickému zoomování iPhonů */
+        padding: 12px;   /* Větší plocha pro prsty */
+    }
+
+    .ukol-radek {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+}
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -132,10 +159,18 @@
         });
     }
 
-    function smazUkol(id) {
-        fetch(`${API}/ukoly/${id}`, { method: 'DELETE' })
-            .then(() => nactiUkoly());
+   async function smazatUkol(id) {
+    // Tady musí být ta správná adresa k Renderu!
+    const response = await fetch(`${API}/ukoly/${id}`, {
+        method: 'DELETE'
+    });
+
+    if (response.ok) {
+        nactiUkoly(); // Znovu načteme seznam po smazání
+    } else {
+        alert('Nepodařilo se smazat úkol.');
     }
+}
 
     function odhlasit() {
         // --- 3. VYMAZÁNÍ PŘI ODHLÁŠENÍ ---
