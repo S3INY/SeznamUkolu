@@ -2,65 +2,125 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>IT Dashboard - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moje Úkoly - IT Dashboard</title>
     <style>
         /* Moderní Apple-ish styl */
-        body { font-family: -apple-system, sans-serif; background: #F5F5F7; display: flex; justify-content: center; padding-top: 50px; }
-        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 350px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #D2D2D7; border-radius: 10px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #007AFF; color: white; font-weight: 600; cursor: pointer; }
-        .hidden { display: none; }
-        li { background: #FBFBFD; border: 1px solid #F2F2F7; margin: 10px 0; padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background: #F5F5F7; 
+            display: flex; 
+            justify-content: center; 
+            padding: 50px 20px;
+            margin: 0;
+        }
 
-        /* Základní úpravy pro mobily (šířka pod 600px) */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-    
-    .container {
-        width: 100%; /* Roztáhne kontejner na celou šířku */
-        padding: 15px;
-    }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 24px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
+            width: 100%;
+            max-width: 400px; /* Ideální šířka pro desktop i mobil */
+            box-sizing: border-box;
+        }
 
-    input[type="text"], button {
-        width: 100%; /* Vstupní pole a tlačítka pod sebe */
-        margin-bottom: 10px;
-        font-size: 16px; /* Zabrání automatickému zoomování iPhonů */
-        padding: 12px;   /* Větší plocha pro prsty */
-    }
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 20px; text-align: center; }
 
-    .ukol-radek {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-    }
-}
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            border: 1px solid #D2D2D7; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 16px; /* Zabrání zoomování na iOS */
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus { border-color: #007AFF; }
+
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: none; 
+            background: #007AFF; 
+            color: white; 
+            font-weight: 600; 
+            font-size: 16px;
+            cursor: pointer; 
+            transition: opacity 0.2s;
+        }
+
+        button:active { opacity: 0.7; }
+
+        .hidden { display: none !important; }
+
+        ul { list-style: none; padding: 0; margin-top: 20px; }
+
+        li { 
+            background: #FBFBFD; 
+            border: 1px solid #F2F2F7; 
+            margin: 8px 0; 
+            padding: 12px 16px; 
+            border-radius: 14px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        li span { flex: 1; word-break: break-word; font-size: 15px; color: #1D1D1F; }
+
+        .delete-btn { 
+            background: none; 
+            color: #FF3B30; 
+            width: auto; 
+            padding: 5px 10px; 
+            font-size: 18px; 
+            font-weight: bold;
+        }
+
+        .logout-btn { 
+            background: #E8E8ED; 
+            color: #1D1D1F; 
+            margin-top: 30px; 
+            font-size: 14px; 
+            padding: 10px;
+        }
+
+        /* Responzivní úpravy pro malé mobily */
+        @media (max-width: 400px) {
+            .container { padding: 20px; }
+            h1 { font-size: 20px; }
+        }
     </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 <div class="container">
     <div id="auth-section">
         <h1 id="auth-title">Přihlášení</h1>
-        <input type="text" id="username" placeholder="Uživatelské jméno">
-        <input type="password" id="password" placeholder="Heslo">
+        <input type="text" id="username" placeholder="Uživatelské jméno" autocomplete="username">
+        <input type="password" id="password" placeholder="Heslo" autocomplete="current-password">
         <button onclick="provedAuth()" id="auth-btn">Přihlásit se</button>
-        <p style="text-align:center; font-size: 12px; color: #8E8E93; cursor: pointer;" onclick="prepniRezim()">
+        <p style="text-align:center; font-size: 14px; color: #007AFF; cursor: pointer; margin-top: 20px;" onclick="prepniRezim()">
             Nemáš účet? Zaregistruj se.
         </p>
     </div>
 
     <div id="task-section" class="hidden">
         <h1>Moje úkoly</h1>
-        <div style="display:flex; gap:5px;">
-            <input type="text" id="novyUkol" placeholder="Nový úkol...">
-            <button style="width:auto;" onclick="pridatUkol()">+</button>
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="novyUkol" placeholder="Co je potřeba udělat?">
+            <button style="width:50px; flex-shrink:0;" onclick="pridatUkol()">+</button>
         </div>
         <ul id="seznam"></ul>
-        <button onclick="odhlasit()" style="background:#8E8E93; margin-top:20px; font-size:12px;">Odhlásit se</button>
+        <button class="logout-btn" onclick="odhlasit()">Odhlásit se</button>
     </div>
 </div>
 
@@ -69,18 +129,15 @@
     let userId = null;
     let jeRezimRegistrace = false;
 
-    // --- 1. KONTROLA PŘI STARTU (Hned jak otevřeš web) ---
+    // --- AUTOMATICKÉ PŘIHLÁŠENÍ ---
     const ulozenaData = localStorage.getItem('mojeSession');
     if (ulozenaData) {
         const session = JSON.parse(ulozenaData);
-        const ted = new Date().getTime();
-
-        // Kontrola, jestli nevypršelo 30 dní (v milisekundách)
-        if (ted < session.expirace) {
+        if (new Date().getTime() < session.expirace) {
             userId = session.id;
             zobrazDashboard();
         } else {
-            localStorage.removeItem('mojeSession'); // Stará data vyhodíme
+            localStorage.removeItem('mojeSession');
         }
     }
 
@@ -97,28 +154,25 @@
         const heslo = document.getElementById('password').value;
         const cesta = jeRezimRegistrace ? '/registrace' : '/login';
 
+        if (!jmeno || !heslo) return alert("Vyplň jméno a heslo.");
+
         fetch(API + cesta, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ Jmeno: jmeno, Heslo: heslo })
         })
         .then(res => {
-            if (!res.ok) throw new Error("Chyba při autentizaci");
-            if (jeRezimRegistrace) {
-                alert("Registrace úspěšná!");
-                prepniRezim();
-                return null;
-            }
-            return res.json();
+            if (!res.ok) throw new Error("Špatné jméno nebo heslo.");
+            return jeRezimRegistrace ? null : res.json();
         })
         .then(id => {
-            if (id) {
+            if (jeRezimRegistrace) {
+                alert("Účet vytvořen! Teď se můžeš přihlásit.");
+                prepniRezim();
+            } else if (id) {
                 userId = id;
-                
-                // --- 2. ULOŽENÍ NA 30 DNÍ ---
                 const expirace = new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
                 localStorage.setItem('mojeSession', JSON.stringify({ id: id, expirace: expirace }));
-                
                 zobrazDashboard();
             }
         })
@@ -139,7 +193,10 @@
                 list.innerHTML = '';
                 data.forEach(item => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<span>${item.text}</span><button onclick="smazUkol(${item.id})" style="width:auto; background:none; color:red; cursor:pointer;">✕</button>`;
+                    li.innerHTML = `
+                        <span>${item.text}</span>
+                        <button class="delete-btn" onclick="smazatUkol(${item.id})">✕</button>
+                    `;
                     list.appendChild(li);
                 });
             });
@@ -147,7 +204,7 @@
 
     function pridatUkol() {
         const input = document.getElementById('novyUkol');
-        if (!input.value) return;
+        if (!input.value.trim()) return;
 
         fetch(`${API}/ukoly`, {
             method: 'POST',
@@ -159,21 +216,20 @@
         });
     }
 
-   async function smazatUkol(id) {
-    // Tady musí být ta správná adresa k Renderu!
-    const response = await fetch(`${API}/ukoly/${id}`, {
-        method: 'DELETE'
-    });
-
-    if (response.ok) {
-        nactiUkoly(); // Znovu načteme seznam po smazání
-    } else {
-        alert('Nepodařilo se smazat úkol.');
+    async function smazatUkol(id) {
+        try {
+            const response = await fetch(`${API}/ukoly/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                nactiUkoly();
+            } else {
+                alert('Smazání se nepodařilo.');
+            }
+        } catch (err) {
+            console.error("Chyba při mazání:", err);
+        }
     }
-}
 
     function odhlasit() {
-        // --- 3. VYMAZÁNÍ PŘI ODHLÁŠENÍ ---
         localStorage.removeItem('mojeSession');
         location.reload();
     }

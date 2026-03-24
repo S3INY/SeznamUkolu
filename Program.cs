@@ -1,27 +1,24 @@
 using MySql.Data.MySqlClient;
+using Dapper; // Tip: Dapper ti ušetří psaní MySqlCommandů, ale necháme to zatím takto
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Registrace CORS - nezbytné pro propojení Frontendu a Backendů na různých adresách
+// Registrace CORS
 builder.Services.AddCors(); 
 
-// NASTAVENÍ PORTU PRO CLOUD (Render)
-// Render používá proměnnou PORT, pokud není, použije se 5221 pro lokální vývoj
+// NASTAVENÍ PORTU PRO CLOUD
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5221";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// Tohle povolí tvému webu z Vercelu mluvit s tvým Macem
+// Povolení CORS pro všechny (Vercel -> Render)
 app.UseCors(policy => policy
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
 
 // NASTAVENÍ DATABÁZE
-// Heslo se načte z Environment Variables na Renderu. 
-// PRO LOKÁLNÍ TEST: Můžeš si místo "TVOJE_HESLO_Z_AIVENU" napsat své heslo, 
-// ale GitHub tě může znovu zablokovat. Nejlepší je heslo po Pushnutí smazat.
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "AVNS_6HxgAgi6xPEpPJcwzHI";
 string connString = $"server=mojesql-mujprojekt.a.aivencloud.com;port=10341;uid=avnadmin;pwd={dbPassword};database=defaultdb;SslMode=Required";
 
@@ -70,6 +67,16 @@ app.MapPost("/api/ukoly", (NovyUkolDTO n) => {
     var cmd = new MySqlCommand("INSERT INTO ukoly (text_ukolu, uzivatel_id) VALUES (@t, @uid)", conn);
     cmd.Parameters.AddWithValue("@t", n.Text);
     cmd.Parameters.AddWithValue("@uid", n.UserId);
+    cmd.ExecuteNonQuery();
+    return Results.Ok();
+});
+
+// --- TADY JE TA OPRAVA: SMAZÁNÍ ÚKOLU ---
+app.MapDelete("/api/ukoly/{id}", (int id) => {
+    using var conn = new MySqlConnection(connString);
+    conn.Open();
+    var cmd = new MySqlCommand("DELETE FROM ukoly WHERE id = @id", conn);
+    cmd.Parameters.AddWithValue("@id", id);
     cmd.ExecuteNonQuery();
     return Results.Ok();
 });
