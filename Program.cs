@@ -12,15 +12,18 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// Aktivace CORS politiky
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+// Tohle povolí tvému webu z Vercelu mluvit s tvým Macem
+app.UseCors(policy => policy
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 // NASTAVENÍ DATABÁZE
 // Heslo se načte z Environment Variables na Renderu. 
 // PRO LOKÁLNÍ TEST: Můžeš si místo "TVOJE_HESLO_Z_AIVENU" napsat své heslo, 
 // ale GitHub tě může znovu zablokovat. Nejlepší je heslo po Pushnutí smazat.
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "AVNS_6HxgAgi6xPEpPJcwzHI";
-string connString = $"server=mojesql-mujprojekt-a.aivencloud.com;port=10341;uid=avnadmin;pwd={dbPassword};database=defaultdb;SslMode=Required";
+string connString = $"server=mojesql-mujprojekt.a.aivencloud.com;port=10341;uid=avnadmin;pwd={dbPassword};database=defaultdb;SslMode=Required";
 
 // --- API ENDPOINTY ---
 
