@@ -1,28 +1,21 @@
 using MySql.Data.MySqlClient;
-using Dapper; // Tip: Dapper ti ušetří psaní MySqlCommandů, ale necháme to zatím takto
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Registrace CORS
 builder.Services.AddCors(); 
 
-// NASTAVENÍ PORTU PRO CLOUD
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5221";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// Povolení CORS pro všechny (Vercel -> Render)
 app.UseCors(policy => policy
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-// NASTAVENÍ DATABÁZE
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "AVNS_6HxgAgi6xPEpPJcwzHI";
-string connString = $"server=mojesql-mujprojekt.a.aivencloud.com;port=10341;uid=avnadmin;pwd={dbPassword};database=defaultdb;SslMode=Required";
-
-// --- API ENDPOINTY ---
+string connString = $"server=mojesql-mujprojekt-a.aivencloud.com;port=10341;uid=avnadmin;pwd={dbPassword};database=defaultdb;SslMode=Required";
 
 // REGISTRACE
 app.MapPost("/api/registrace", (UzivatelDTO u) => {
@@ -71,7 +64,7 @@ app.MapPost("/api/ukoly", (NovyUkolDTO n) => {
     return Results.Ok();
 });
 
-// --- TADY JE TA OPRAVA: SMAZÁNÍ ÚKOLU ---
+// SMAZÁNÍ ÚKOLU - Opravená verze bez Dapperu
 app.MapDelete("/api/ukoly/{id}", (int id) => {
     using var conn = new MySqlConnection(connString);
     conn.Open();
@@ -83,6 +76,5 @@ app.MapDelete("/api/ukoly/{id}", (int id) => {
 
 app.Run();
 
-// POMOCNÉ STRUKTURY (DTOs)
 record UzivatelDTO(string Jmeno, string Heslo);
 record NovyUkolDTO(string Text, int UserId);
